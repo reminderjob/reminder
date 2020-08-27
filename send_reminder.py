@@ -16,6 +16,15 @@ with open("config.json") as json_data_file:
 gmail_user = settings_file['gmail_user']
 gmail_password = settings_file['gmail_pwd']
 msg = email.message.Message()
+# email content
+sent_from = gmail_user
+to = settings_file['recipients']
+subject = '[Reminder] Submit Leave Form at BGC Portal'
+    # msg settings
+msg['Subject'] = subject
+msg['From'] = sent_from
+msg['To'] = ', '.join(to)
+msg.add_header('Content-Type', 'text/html')
 
 
 # logging settings
@@ -35,10 +44,6 @@ def reload_daily_settings():
     endmonth = monthrange(current.year, current.month)
     lastdayofmonth = datetime(current.year, current.month, endmonth[1])
     lastdayofmonth = lastdayofmonth.strftime('%d-%m-%Y')
-    # email content
-    sent_from = gmail_user
-    to = settings_file['recipients']
-    subject = '[Reminder] Submit Leave Form at BGC Portal'
     body = """Hi Guys ,
     <br>
     <h2> Please be reminded to : <br> <u style="color: #AF5B5B;"> Submit your Leave Form</u> <br>
@@ -50,11 +55,6 @@ def reload_daily_settings():
     <br>
     <br>
     - %s""" % (str(lastdayofmonth), sent_from)
-    # msg settings
-    msg['Subject'] = subject
-    msg['From'] = sent_from
-    msg['To'] = ', '.join(to)
-    msg.add_header('Content-Type', 'text/html')
     msg.set_payload(body)
     logging.info(current_date_now + ': settings set')
     return current_date , the_28th_date
